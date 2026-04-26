@@ -1,13 +1,19 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse  # <-- Adicione esta linha
 from core.use_cases import LivrariaUseCases
 from infrastructure.txt_repository import TXTLivroRepository
 
 app = FastAPI()
 
-# Montando os blocos (Injeção de Dependência)
-# O FastAPI conhece o TXT, mas passa ele escondido para o Caso de Uso
 repositorio_txt = TXTLivroRepository()
 casos_de_uso = LivrariaUseCases(repositorio_txt)
+
+# --- Adicione este bloco ---
+@app.get("/", include_in_schema=False)
+async def rota_raiz():
+    # Redireciona o professor direto para a tela de testes!
+    return RedirectResponse(url="/docs")
+# ---------------------------
 
 @app.get("/catalogo")
 async def ver_catalogo():
